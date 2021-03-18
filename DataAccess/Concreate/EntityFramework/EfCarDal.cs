@@ -1,5 +1,7 @@
-﻿using DataAccess.Abstract;
+﻿using Core.DataAccess.EntityFramework;
+using DataAccess.Abstract;
 using Entities.Concreate;
+using Entities.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,51 +11,30 @@ using System.Text;
 
 namespace DataAccess.Concreate.EntityFramework
 {
-    public class EfCarDal : ICarDal
+    public class EfCarDal : EfEntityRepositoryBase<Car, CarRentalContext>, ICarDal
     {
-        public void Add(Car Entity)
+        public List<CarDetailsDto> GetCarDetails()
         {
             using (CarRentalContext context = new CarRentalContext())
             {
-                var EntityToAdd = context.Entry(Entity);
-                EntityToAdd.State = EntityState.Added;
-                context.SaveChanges();
-            }
-        }
+                var result = from c in context.Cars
 
-        public void Delete(Car Entity)
-        {
-            using (CarRentalContext context = new CarRentalContext())
-            {
-                var EntityToDelete = context.Entry(Entity);
-                EntityToDelete.State = EntityState.Deleted;
-                context.SaveChanges();
-            }
-        }
+                             join co in context.Colors
+                             on c.ColorId equals co.Id
 
-        public Car Get(Expression<Func<Car, bool>> filter)
-        {
-            using (CarRentalContext context = new CarRentalContext())
-            {
-                return context.Set<Car>().SingleOrDefault(filter);
-            }
-        }
+                             join b in context.Brands
+                             on c.Id equals b.Id
 
-        public List<Car> GetAll(Expression<Func<Car, bool>> filter = null)
-        {
-            using (CarRentalContext context = new CarRentalContext())
-            {
-                return filter == null ? context.Set<Car>().ToList() : context.Set<Car>().Where(filter).ToList();
-            }
-        }
+                             select new CarDetailsDto
+                             {
+                                 CarId = c.Id,
+                                 CarName = c.Name,
+                                 BrandName = b.Name,
+                                 ColorName = co.Name,
+                                 DailyPrice = c.DailyPrice
+                             };
 
-        public void Update(Car Entity)
-        {
-            using (CarRentalContext context = new CarRentalContext())
-            {
-                var EntityToUpdate = context.Entry(Entity);
-                EntityToUpdate.State = EntityState.Modified;
-                context.SaveChanges();
+                return result.ToList();
             }
         }
     }
