@@ -12,21 +12,21 @@ namespace Core.DataAccess.EntityFramework
         where TEntity : class, IEntity, new()
         where TContext : DbContext, new()
     {
-        public void Add(TEntity Entity)
+        public void Add(TEntity entity)
         {
             using (TContext context = new TContext())
             {
-                var EntityToAdd = context.Entry(context);
+                var EntityToAdd = context.Entry(entity);
                 EntityToAdd.State = EntityState.Added;
                 context.SaveChanges();
             }
         }
 
-        public void Delete(TEntity Entity)
+        public void Delete(TEntity entity)
         {
             using (TContext context = new TContext())
             {
-                var EntityToDelete = context.Entry(context);
+                var EntityToDelete = context.Entry(entity);
                 EntityToDelete.State = EntityState.Deleted;
                 context.SaveChanges();
             }
@@ -48,11 +48,11 @@ namespace Core.DataAccess.EntityFramework
             }
         }
 
-        public void Update(TEntity Entity)
+        public void Update(TEntity entity)
         {
             using (TContext context = new TContext())
             {
-                var EntityToUpdate = context.Entry(context);
+                var EntityToUpdate = context.Entry(entity);
                 EntityToUpdate.State = EntityState.Modified;
                 context.SaveChanges();
             }

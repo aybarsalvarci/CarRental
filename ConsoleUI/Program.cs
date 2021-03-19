@@ -1,6 +1,8 @@
 ﻿using Business.Concreate;
 using DataAccess.Concreate.EntityFramework;
+using Entities.Concreate;
 using System;
+using System.Collections.Generic;
 
 namespace ConsoleUI
 {
@@ -8,14 +10,19 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            CarManager carManager = new CarManager(new EfCarDal());
-            var result = carManager.GetAll();
+            RentalManager rentalManager = new RentalManager(new EfRentalDal());
+
+            Rental rental = new Rental {
+                CarId = 1,
+                CustomerId = 1,
+                RentDate = DateTime.Now
+            };
+
+            var result = rentalManager.Add(rental);
+
             Console.WriteLine(result.Message);
-            Console.WriteLine(result.Success);
-            foreach (var item in result.Data)
-            {
-                Console.WriteLine(item.Name);
-            }
+
+            
         }
     }
 }
